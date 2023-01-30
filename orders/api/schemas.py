@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 from uuid import UUID
+from datetime import datetime
 
 from pydantic import BaseModel, Field, conlist, conint
 
@@ -22,7 +23,7 @@ class Status(Enum):
 class OrderItemSchema(BaseModel):
     product: str
     size: Size
-    quantity: conint[Optional(ge=1, strict=True)] = 1
+    quantity: Optional[conint(ge=1, strict=True)] = 1
 
 
 class CreateOrderSchema(BaseModel):

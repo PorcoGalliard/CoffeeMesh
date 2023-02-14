@@ -11,11 +11,7 @@ from fastapi import HTTPException
 from starlette.responses import Response
 from starlette import status
 
-from fastapi import FastAPI
-
-app = FastAPI(debug=True)
-
-# from orders.app import app
+from orders.app import app
 
 
 ORDERS = []

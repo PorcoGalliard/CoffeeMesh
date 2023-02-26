@@ -91,7 +91,12 @@ class KitchenSchedule(MethodView):
 
     @blueprint.response(status_code=200, schema=GetScheduledOrderSchema)
     def get(self, schedule_id):
-        return schedules[0]
+        for schedule in schedules:
+            if schedule['id'] == schedule_id:
+                validate_schedule(schedule)
+                return schedule
+
+        abort(404, description=f'Resource with ID {schedule_id} not found')
 
     @blueprint.arguments(ScheduleOrderSchema)
     @blueprint.response(status_code=200, schema=GetScheduledOrderSchema)

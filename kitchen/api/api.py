@@ -2,6 +2,7 @@ from datetime import datetime
 import uuid
 import copy
 
+from flask import abort
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -17,18 +18,15 @@ from api.schemas import (
 
 blueprint = Blueprint('kitchen', __name__, description='Kitchen API')
 
-schedules = [{
-    'id': str(uuid.uuid4()),
-    'scheduled': datetime.now(),
-    'status': 'pending',
-    'order': [
-        {
-            'product': 'cappuccino',
-            'quantity': 1,
-            'size': 'big'
-        }
-    ]
-}]
+schedules = []
+
+
+def validate_schedule(schedule):
+    schedule = copy.deepcopy(schedule)
+    schedule['scheduled'] = schedule['scheduled'].isoformat()
+    errors = GetScheduledOrderSchema().validate(schedule)
+    if errors:
+        raise ValidationError(errors)
 
 
 @blueprint.route('/kitchen/schedules')

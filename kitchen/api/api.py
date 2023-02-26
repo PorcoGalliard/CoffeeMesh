@@ -132,4 +132,9 @@ def cancel_schedule(schedule_id):
 @blueprint.response(status_code=200, schema=ScheduleStatusSchema)
 @blueprint.route('/kitchen/schedules/<schedule_id>/status', methods=['GET'])
 def get_schedule_status(schedule_id):
-    return schedules[0]
+    for schedule in schedules:
+        if schedule['id'] == schedule_id:
+            validate_schedule(schedule)
+            return {'status': schedule['status']}
+
+    abort(404, description=f'Resource with ID {schedule_id} not found')

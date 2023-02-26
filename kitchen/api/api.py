@@ -78,7 +78,12 @@ class KitchenSchedules(MethodView):
     @blueprint.arguments(ScheduleOrderSchema)
     @blueprint.response(status_code=201, schema=GetScheduledOrderSchema)
     def post(self, payload):
-        return schedules[0]
+        payload['id'] = str(uuid.uuid4())
+        payload['scheduled'] = datetime.utcnow()
+        payload['status'] = 'pending'
+        schedules.append(payload)
+        validate_schedule(payload)
+        return payload
 
 
 @blueprint.route('/kitchen/schedules/<schedule_id>')

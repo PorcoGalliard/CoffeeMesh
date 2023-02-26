@@ -120,7 +120,13 @@ class KitchenSchedule(MethodView):
 @blueprint.response(status_code=200, schema=GetScheduledOrderSchema)
 @blueprint.route('/kitchen/schedules/<schedule_id>/cancel', methods=['POST'])
 def cancel_schedule(schedule_id):
-    return schedules[0]
+    for schedule in schedules:
+        if schedule['id'] == schedule_id:
+            schedule['status'] == 'cancelled'
+            validate_schedule(schedule)
+            return schedule
+
+    abort(404, description=f'Resource with ID {schedule_id} not found')
 
 
 @blueprint.response(status_code=200, schema=ScheduleStatusSchema)

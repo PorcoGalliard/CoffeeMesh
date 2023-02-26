@@ -110,7 +110,11 @@ class KitchenSchedule(MethodView):
 
     @blueprint.response(status_code=204)
     def delete(self, schedule_id):
-        return ''
+        for index, schedule in enumerate(schedules):
+            if schedule['id'] == schedule_id:
+                schedule.pop(index)
+                return
+        abort(404, description=f'Resource with ID {schedule_id} not found')
 
 
 @blueprint.response(status_code=200, schema=GetScheduledOrderSchema)

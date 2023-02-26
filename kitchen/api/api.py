@@ -1,8 +1,11 @@
 from datetime import datetime
 import uuid
+import copy
 
 from flask.views import MethodView
 from flask_smorest import Blueprint
+
+from marshmallow import ValidationError
 
 from api.schemas import (
     GetScheduledOrderSchema,
@@ -34,6 +37,13 @@ class KitchenSchedules(MethodView):
     @blueprint.arguments(GetKitchenScheduleParameter, location='query')
     @blueprint.response(status_code=200, schema=GetScheduledOrdersSchema)
     def get(self, parameters):
+        for schedule in schedules:
+            schedule = copy.deepcopy(schedule)
+            schedule['scheduled'] = schedule['scheduled'].isoformat()
+            errors = GetScheduledOrderSchema().validate(schedule)
+            if errors:
+                raise ValidationError(errors)
+
         if not parameters:
             return {'schedules': schedules}
 

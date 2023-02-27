@@ -1,3 +1,4 @@
+from orders.web.api import api
 from pathlib import Path
 from fastapi import FastAPI
 
@@ -11,5 +12,3 @@ oas_doc = yaml.safe_load(
 )
 
 app.open_api = lambda: oas_doc
-
-from orders.api import api

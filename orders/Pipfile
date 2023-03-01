@@ -7,6 +7,8 @@ name = "pypi"
 fastapi = "*"
 uvicorn = "*"
 pyyaml = "*"
+sqlalchemy = "*"
+alembic = "*"
 
 [dev-packages]
 

@@ -1,16 +1,21 @@
 from orders.repository.models import OrderModel, OrderItemModel
+# data transfer object, objek dari business layer
 from orders.orders_service.orders import Order
 
 
 class OrdersRepository:
     def __init__(self, session):
+        # digunakan untuk koneksi dan interaksi dengan DV
         self.session = session
 
     def add(self, items):
+        # (**item digunakan untuk memecah parameter)
         record = OrderModel(
             items=[OrderItemModel(**item) for item in items]
         )
+        # menambah record ke session object
         self.session.add(record)
+        # mengembalikan business object dengan memasukkan parameter yang telah dipecah tadi ke pointer SQLAlchemy
         return Order(**record.dict(), order_=record)
 
     def _get(self, id_):

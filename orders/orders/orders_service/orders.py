@@ -56,3 +56,17 @@ class Order:
             raise InvalidActionError(
                 f'Cannot cancel order with id {self.id}'
             )
+
+    def pay(self):
+        # Implement the API Calls
+        response = requests.post(
+            "http/localhost:3001/payments",
+            json={'order_id': self.id}
+        )
+
+        if response.status_code == 201:
+            return
+
+        raise APIIntegrationError(
+            f'Could not process payment for order with id {self.id}'
+        )

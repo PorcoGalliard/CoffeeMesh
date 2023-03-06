@@ -70,3 +70,17 @@ class Order:
         raise APIIntegrationError(
             f'Could not process payment for order with id {self.id}'
         )
+
+    def schedule(self):
+        response = requests.post(
+            "https://localhost:3000/kitchen/schedules",
+            json={'order': [item.dict() for item in self.items]}
+        )
+
+        if response.status_code == 201:
+            # return the schedule_id
+            return response.json()['id']
+
+        raise APIIntegrationError(
+            f'Could not schedule order with id {self.id}'
+        )

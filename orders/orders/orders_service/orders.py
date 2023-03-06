@@ -48,9 +48,9 @@ class Order:
             if response.status_code == 200:
                 return
 
-        raise APIIntegrationError(
-            f'Could not cancel order with id {self.id}'
-        )
+            raise APIIntegrationError(
+                f'Could not cancel order with id {self.id}'
+            )
 
         if self.status == 'delivery':
             raise InvalidActionError(

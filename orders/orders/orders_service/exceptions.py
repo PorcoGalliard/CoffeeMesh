@@ -2,7 +2,7 @@ class OrderNotFoundError(Exception):
     pass
 
 
-class APIintegrationError(Exception):
+class APIIntegrationError(Exception):
     pass
 
 

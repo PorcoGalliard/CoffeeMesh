@@ -20,7 +20,10 @@ class OrdersService:
         raise OrderNotFoundError(f'Order with id {order_id} not found')
 
     def update_order(self, order_id, items):
-        pass
+        order = self.orders_repository.get(order_id)
+        if order is None:
+            raise OrderNotFoundError(f'Order with id {order_id} not found')
+        return self.orders_repository.update(order_id, {'items': items})
 
     def list_order(self, **filters):
         pass

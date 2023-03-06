@@ -5,7 +5,7 @@ from orders.orders_service.orders import Order
 
 class OrdersRepository:
     def __init__(self, session):
-        # digunakan untuk koneksi dan interaksi dengan DV
+        # digunakan untuk koneksi dan interaksi dengan DB
         self.session = session
 
     def add(self, items):

@@ -37,6 +37,7 @@ class Order:
         return self._status or self.order_.status
 
     def cancel(self):
+        # Implement the API Calls
         if self.status == 'progress':
             kitchen_base_url = "http://localhost:3000/kitchen"
             response = requests.post(

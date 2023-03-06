@@ -1,3 +1,10 @@
+import requests
+
+from orders_service.exceptions import (
+    APIIntegrationError, InvalidActionError, OrderNotFoundError
+)
+
+
 class OrderItem:
     # Business object that represents an order item
     def __init__(self, id, product, quantity, size):
@@ -28,3 +35,23 @@ class Order:
     @property
     def status(self):
         return self._status or self.order_.status
+
+    def cancel(self):
+        if self.status == 'progress':
+            kitchen_base_url = "http://localhost:3000/kitchen"
+            response = requests.post(
+                f"{kitchen_base_url}/schedules/{self.schedule_id}/cancel",
+                json={"order": [item.dict() for item in self.items]},
+            )
+
+            if response.status_code == 200:
+                return
+
+        raise APIIntegrationError(
+            f'Could not cancel order with id {self.id}'
+        )
+
+        if self.status == 'delivery':
+            raise InvalidActionError(
+                f'Cannot cancel order with id {self.id}'
+            )

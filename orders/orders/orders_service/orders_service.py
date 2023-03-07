@@ -26,7 +26,8 @@ class OrdersService:
         return self.orders_repository.update(order_id, {'items': items})
 
     def list_order(self, **filters):
-        pass
+        limit = filters.pop('limit', None)
+        return self.orders_repository.list(limit, **filters)
 
     def pay_order(self, order_id):
         pass

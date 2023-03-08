@@ -30,7 +30,16 @@ class OrdersService:
         return self.orders_repository.list(limit, **filters)
 
     def pay_order(self, order_id):
-        pass
+        order = self.orders_repository.get(order_id)
+        if order is None:
+            raise OrderNotFoundError(f'Order with id {order_id} not found')
+
+        order.pay()
+        schedule_id = order.schedule()
+
+        return self.orders_repository.update(
+            order_id, {'status': 'scheduled', 'schedule_id': schedule_id}
+        )
 
     def cancel_order(self, order_id):
         pass

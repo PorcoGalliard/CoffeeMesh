@@ -16,6 +16,7 @@ class UnitOfWork:
         return self
 
     def __exit__(self, exc_type, exc_val, traceback):
+        # check whether an exception took place
         if exc_type is not None:
             # if an exception took place, rollback the database transaction
             self.rollback()

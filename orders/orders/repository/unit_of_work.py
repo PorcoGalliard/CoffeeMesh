@@ -14,3 +14,10 @@ class UnitOfWork:
         self.session = self.session_maker()
         # return the instance of unit of work object
         return self
+
+    def __exit__(self, exc_type, exc_val, traceback):
+        if exc_type is not None:
+            # if an exception took place, rollback the database transaction
+            self.rollback()
+            self.session.close()
+        self.session.close()

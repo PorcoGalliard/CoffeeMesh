@@ -22,3 +22,7 @@ class UnitOfWork:
             self.rollback()
             self.session.close()
         self.session.close()
+
+    def commit(self):
+        # wrapper around SQLAlchemy commit method
+        self.session.commit()

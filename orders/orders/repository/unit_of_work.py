@@ -20,6 +20,7 @@ class UnitOfWork:
         if exc_type is not None:
             # if an exception took place, rollback the database transaction
             self.rollback()
+            # close the session
             self.session.close()
         self.session.close()
 

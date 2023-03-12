@@ -36,37 +36,21 @@ def get_orders(cancelled: Optional[bool] = None, limit: Optional[int] = None):
         )
     return {'orders': [result.dict() for result in results]}
 
-    # If parameter is set, we filter list of item in query_set variable
-    query_set = [order for order in ORDERS]
-
-    if cancelled is not None:
-        if cancelled:
-            query_set = [
-                order
-                for order in query_set
-                if order['status'] == 'cancelled'
-            ]
-        else:
-            query_set = [
-                order
-                for order in query_set
-                if order['status'] != 'cancelled'
-            ]
-
-    if limit is not None and len(query_set) > limit:
-        return {'orders': query_set[:limit]}
-
-    return query_set
-
 
 @app.post('/orders', status_code=status.HTTP_201_CREATED, response_model=GetOrderSchema)
-def create_order(order_details: CreateOrderSchema):  # <<< Untuk validasi request payload
-    order = order_details.dict()
-    order['id'] = uuid.uuid4()
-    order['created'] = datetime.utcnow()
-    order['status'] = 'created'
-    ORDERS.append(order)
-    return order
+def create_order(payload: CreateOrderSchema):  # <<< Untuk validasi request payload
+    with UnitOfWork() as unit_of_work:
+        repo = OrdersRepository(unit_of_work.session)
+        orders_service = OrdersService(repo)
+        order = orders_service.place_order(payload.dict()['order'])
+        order = payload.dict()['order']
+        for item in order:
+            item['size'] = item['size'].value
+        order = orders_service.place_order(order)
+
+        unit_of_work.commit()
+        return_payload = order.dict()
+    return return_payload
 
 
 @app.get('/orders/{order_id}')

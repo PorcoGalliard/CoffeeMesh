@@ -23,14 +23,18 @@ from orders.repository.unit_of_work import UnitOfWork
 
 from orders.web.app import app
 
-ORDERS = []
-
 
 # Untuk Register API Endpoint dan Validasi Response Payload
 @app.get('/orders', response_model=GetOrdersSchema)
 def get_orders(cancelled: Optional[bool] = None, limit: Optional[int] = None):
-    if cancelled is None and limit is None:  # No parameter is set
-        return {'orders': ORDERS}
+    # entering the database session / context
+    with UnitOfWork() as unit_of_work:
+        repo = OrdersRepository(unit_of_work.session)
+        orders_service = OrdersService(repo)
+        results = orders_service.list_order(
+            limit=limit, cancelled=cancelled
+        )
+    return {'orders': [result.dict() for result in results]}
 
     # If parameter is set, we filter list of item in query_set variable
     query_set = [order for order in ORDERS]

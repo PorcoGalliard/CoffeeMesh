@@ -1,5 +1,8 @@
 from orders.web.api.schemas import CreateOrderSchema, GetOrderSchema, GetOrdersSchema
 
+from http import HTTPStatus
+from typing import List, Optional
+
 import time
 import uuid
 
@@ -13,6 +16,12 @@ from starlette import status
 
 from orders.web.app import app
 
+from orders.orders_service.exceptions import OrderNotFoundError
+from orders.orders_service.orders_service import OrdersService
+from orders.repository.orders_repository import OrdersRepository
+from orders.repository.unit_of_work import UnitOfWork
+
+from orders.web.app import app
 
 ORDERS = []
 

@@ -55,12 +55,16 @@ def create_order(payload: CreateOrderSchema):  # <<< Untuk validasi request payl
 
 @app.get('/orders/{order_id}')
 def get_order(order_id: UUID):
-    for order in ORDERS:
-        if order['id'] == order_id:
-            return order
-    raise HTTPException(
-        status_code=404, detail=f'Order with ID {order_id} not found'
-    )
+    try:
+        with UnitOfWork() as unit_of_work:
+            repo = OrdersRepository(unit_of_work.session)
+            orders_service = OrdersService(repo)
+            order = orders_service.get_order(order_id=order_id)
+        return order.dict()
+    except OrderNotFoundError:
+        raise HTTPException(
+            status_code=404, detail=f'Order with ID {order_id} not found'
+        )
 
 
 @app.put('/orders/{order_id}')

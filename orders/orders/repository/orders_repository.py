@@ -16,6 +16,7 @@ class OrdersRepository:
         # menambah record ke session object
         self.session.add(record)
         # mengembalikan business object dengan memasukkan parameter yang telah dipecah tadi ke pointer SQLAlchemy
+        # order_ digunakan untuk mengembalikan partial business object dari OrderModel, sebab ID belum ada
         return Order(**record.dict(), order_=record)
 
     def _get(self, id_):

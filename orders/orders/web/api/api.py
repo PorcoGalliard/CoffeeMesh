@@ -104,13 +104,17 @@ def delete_order(order_id: UUID):
 
 @app.post('/orders/{order_id}/cancel')
 def cancel_order(order_id: UUID):
-    for order in ORDERS:
-        if order['id'] == order_id:
-            order['status'] = 'cancelled'
-            return order
-    raise HTTPException(
-        status_code=404, detail=f'Order with ID {order_id} not found'
-    )
+    try:
+        with UnitOfWork() as unit_of_work:
+            repo = OrdersRepository(unit_of_work.session)
+            orders_service = OrdersService(repo)
+            order = orders_service.cancel_order(order_id)
+            unit_of_work.commit()
+        return order.dict()
+    except OrderNotFoundError:
+        raise HTTPException(
+            status_code=404, detail=f'Order with ID {order_id} not found'
+        )
 
 
 @app.post('/orders/{order_id}/pay')

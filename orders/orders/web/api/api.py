@@ -89,13 +89,17 @@ def update_order(order_id: UUID, order_details: CreateOrderSchema):
 
 @app.delete('/orders/{order_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_order(order_id: UUID):
-    for index, order in enumerate(ORDERS):
-        if order['id'] == order_id:
-            ORDERS.pop(index)
-            return Response(status_code=HTTPStatus.NO_CONTENT.value)
-    raise HTTPException(
-        staus_code=404, detail=f'Order with ID {order_id} not found'
-    )
+    try:
+        with UnitOfWork() as unit_of_work:
+            repo = OrdersRepository(unit_of_work.session)
+            orders_service = OrdersService(repo)
+            orders_service.delete_order(order_id)
+            unit_of_work.commit()
+        return
+    except OrderNotFoundError:
+        raise HTTPException(
+            staus_code=404, detail=f'Order with ID {order_id} not found'
+        )
 
 
 @app.post('/orders/{order_id}/cancel')

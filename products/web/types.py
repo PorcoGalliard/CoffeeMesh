@@ -1,8 +1,27 @@
-from ariadne import UnionType, ScalarType
+from ariadne import UnionType, ScalarType, InterfaceType, ObjectType
+import copy
 
 from datetime import datetime
 
+from web.data import ingredients, products
+
 product_type = UnionType('Product')
+product_interface = InterfaceType('ProductInterface')
+
+
+@product_interface.field('ingredients')
+def resolve_product_ingredients(product, _):
+    recipe = [
+        copy.copy(ingredient)
+        for ingredient in product.get("ingredients", [])
+    ]
+
+    for ingredient_recipe in recipe:
+        for ingredient in ingredients:
+            if ingredient['id'] == ingredient_recipe['ingredient']:
+                ingredient_recipe['ingredient'] = ingredient
+
+    return recipe
 
 
 @product_type.type_resolver

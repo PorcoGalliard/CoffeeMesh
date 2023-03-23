@@ -6,8 +6,10 @@ from web.queries import query
 
 from web.types import product_type
 
+from web.mutations import mutation
+
 schema = make_executable_schema(
     (Path(__file__).parent /
      'products.graphql').read_text(),
-    [query,  product_type]
+    [query,  mutation, product_type]
 )

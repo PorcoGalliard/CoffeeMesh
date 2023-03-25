@@ -10,6 +10,8 @@ pyyaml = "*"
 sqlalchemy = "*"
 alembic = "*"
 requests = "*"
+cryptography = "*"
+pyjwt = "*"
 
 [dev-packages]
 
